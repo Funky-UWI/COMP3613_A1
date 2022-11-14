@@ -127,7 +127,7 @@ class UsersIntegrationTests(unittest.TestCase):
         assert author.name == "Bob Moog"
 
     def test_create_publication(self):
-        publication=create_publication([{"title":"Intro to Computer Science"},{"authors":[author.toJSON() for author in authors]},{"coauthors":[coauthor.toJSON() for coauthor in coauthors]}])\
+        publication=create_publication([{"title":"Intro to Computer Science"},{"authors":[author.toJSON() for author in authors]},{"coauthors":[coauthor.toJSON() for coauthor in coauthors]}])
         assert publication.title=="Intro to Computer Science"
 
     def test_get_author_json(self):
