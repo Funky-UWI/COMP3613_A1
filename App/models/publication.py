@@ -6,7 +6,7 @@ class Publication(db.Model):
     title = db.Column("title", db.String(120), nullable=False, unique=True)
     # fields = db.Column("fields", db.ARRAY(db.String(60)), nullable=False)
     publication_date = db.Column("publication_date", db.DateTime, nullable=False)
-    records = db.relationship("PUblishingRecord", backref="publication", lazy=True, cascade="all, delete-orphan")
+    records = db.relationship("PublishingRecord", backref="publication", lazy=True, cascade="all, delete-orphan")
 
     def __init__(self, title, fields, publication_date):
         self.title = title

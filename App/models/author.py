@@ -9,9 +9,9 @@ class Author(db.Model):
     email = db.Column("email", db.String(60), nullable=False)
     password = db.Column("password", db.String(60), nullable=False)
     # qualifications = db.Column("qualifications", db.ARRAY(db.String(120)), nullable=True)
-    records = db.relationship("PUblishingRecord", backref="author", lazy=True, cascade="all, delete-orphan")
+    records = db.relationship("PublishingRecord", backref="author", lazy=True, cascade="all, delete-orphan")
 
-    def __init__(self, first_name, last_name, email, password, qualifications):
+    def __init__(self, first_name, last_name, email, password,qualifications):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
