@@ -1,6 +1,5 @@
 import os
 from flask import Flask
-from flask_login import LoginManager, current_user
 from flask_uploads import DOCUMENTS, IMAGES, TEXT, UploadSet, configure_uploads
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -15,14 +14,14 @@ from App.controllers import (
 )
 
 from App.views import (
-    user_views,
+    # user_views,
     index_views
 )
 
 # New views must be imported and added to this list
 
 views = [
-    user_views,
+    # user_views,
     index_views
 ]
 
