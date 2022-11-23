@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block page %}Login{% endblock %}
+{% block nav %}{% endblock %}
+
+{% block content %}
+    <div>        
+        <div class="container center" style="width: 50%; padding-top: 2.5em;">
+            <div class="inputs">
+                <input type="text" placeholder="email">
+                <br>
+                <input type="password" placeholder="password">
+            </div>
+                
+                <br><br>
+                
+            <div class="remember-me--forget-password">
+                
+        <label>
+            <input type="checkbox" name="item"/>
+            <span class="text-checkbox">Remember me</span>
+        </label>
+                <p><a href="#">forgot your password?</a></p>
+                <p>Don't have an account? <a href="/signup">Create Your Account</a></p>
+            </div>
+                
+                <br>
+                <button class="waves-effect waves-light btn">Login</button>
+        </div>
+        
+    </div>
+{% endblock %}
