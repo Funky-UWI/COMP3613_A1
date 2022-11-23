@@ -8,6 +8,7 @@ class Author(db.Model):
     last_name =  db.Column("last_name", db.String(60), nullable=False)
     email = db.Column("email", db.String(60), nullable=False)
     password = db.Column("password", db.String(60), nullable=False)
+    # qualifications = db.Column("qualifications", db.ARRAY(db.String(120)), nullable=True)
     records = db.relationship("PublishingRecord", backref="author", lazy=True, cascade="all, delete-orphan")
 
     def __init__(self, first_name, last_name, email, password,qualifications):
@@ -15,6 +16,7 @@ class Author(db.Model):
         self.last_name = last_name
         self.email = email
         self.set_password(password)
+        # self.qualifications = qualifications
 
 
     def set_password(self, password):
@@ -36,6 +38,7 @@ class Author(db.Model):
             'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'email': self.email
+            'email': self.email,
+            # 'qualifications': [qualification for qualification in self.qualifications]
         }
 
