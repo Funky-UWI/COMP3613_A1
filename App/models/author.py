@@ -1,4 +1,5 @@
 from App.database import db
+from App.models.publication import getAuthors
 from werkzeug.security import check_password_hash, generate_password_hash
 
 class Author(db.Model):
@@ -8,7 +9,6 @@ class Author(db.Model):
     last_name =  db.Column("last_name", db.String(60), nullable=False)
     email = db.Column("email", db.String(60), nullable=False)
     password = db.Column("password", db.String(60), nullable=False)
-    # qualifications = db.Column("qualifications", db.ARRAY(db.String(120)), nullable=True)
     records = db.relationship("PublishingRecord", backref="author", lazy=True, cascade="all, delete-orphan")
 
     def __init__(self, first_name, last_name, email, password,qualifications):
@@ -16,7 +16,6 @@ class Author(db.Model):
         self.last_name = last_name
         self.email = email
         self.set_password(password)
-        # self.qualifications = qualifications
 
 
     def set_password(self, password):
@@ -28,17 +27,28 @@ class Author(db.Model):
         return check_password_hash(self.password, password)
 
     def getPublications(self):
-        pass
+        publications = []
+        for record in records:
+            publications.append(record.publication)
+        return publications
 
-    def getPublicationTree(self):
-        pass
+
+    def getPublicationTree(self, authors):
+        authors.append(self)
+        publications = self.getPublications()
+        for publication in publications:
+            coAuthors = publication.getAuthors()
+        for author in coAuthors:
+            if author not in authors:
+                publications.append(author.getPublicationTree(authors))
+        return publications
+
 
     def toDict(self):
         return{
             'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'email': self.email,
-            # 'qualifications': [qualification for qualification in self.qualifications]
+            'email': self.email
         }
 
