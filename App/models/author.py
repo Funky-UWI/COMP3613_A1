@@ -1,4 +1,5 @@
 from App.database import db
+from App.models.publication import getAuthors
 from werkzeug.security import check_password_hash, generate_password_hash
 
 class Author(db.Model):
@@ -26,10 +27,22 @@ class Author(db.Model):
         return check_password_hash(self.password, password)
 
     def getPublications(self):
-        pass
+        publications = []
+        for record in records:
+            publications.append(record.publication)
+        return publications
 
-    def getPublicationTree(self):
-        pass
+
+    def getPublicationTree(self, authors):
+        authors.append(self)
+        publications = self.getPublications()
+        for publication in publications:
+            coAuthors = publication.getAuthors()
+        for author in coAuthors:
+            if author not in authors:
+                publications.append(author.getPublicationTree(authors))
+        return publications
+
 
     def toDict(self):
         return{
