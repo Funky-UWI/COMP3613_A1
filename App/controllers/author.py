@@ -30,10 +30,13 @@ def get_author_by_name(first_name,last_name):
     #     authors = [new_author]
     #     return authors
     
-def create_default_author_account(first_name,last_name,email):
+def create_default_author_account(first_name,last_name):
     password = last_name+first_name
-    new_author = create_author(first_name, last_name, email, password)
+    email = first_name+"."+last_name+"@mail.com"
+    new_author = create_author(first_name, last_name, password,email)
     if new_author != None:
+        db.session.add(new_author)
+        db.session.commit()
         return True
     else:
         return False
@@ -52,24 +55,24 @@ def get_author_publications(id):
     return author.get_publications()
 
 
-def publication_tree(authorId):
-    traversed_auths = []
-    root_pubs = []
-    root_co_auths= []
-    root_pubs = get_author_publications(authorId)
-    traversed_auths.append(authorId)
-    for pub in root_pubs:
-        current_auths= pub.getAuthors()
-        for auth in current_auths:
-            if traversed_auths.contains(auth.id) == False:
-                traversed_auths.append(auth.id)
-                root_pubs.extend(get_author_publications(auth.id))
+# def publication_tree(authorId):
+#     traversed_auths = []
+#     root_pubs = []
+#     root_co_auths= []
+#     root_pubs = get_author_publications(authorId)
+#     traversed_auths.append(authorId)
+#     for pub in root_pubs:
+#         current_auths= pub.getAuthors()
+#         for auth in current_auths:
+#             if traversed_auths.contains(auth.id) == False:
+#                 traversed_auths.append(auth.id)
+#                 root_pubs.extend(get_author_publications(auth.id))
 
-    pub_tree = []
-    for auth in traversed_auth:
-        pub_tree.extend(publication_tree(auth))
+#     pub_tree = []
+#     for auth in traversed_auth:
+#         pub_tree.extend(publication_tree(auth))
 
-    return pub_tree
+#     return pub_tree
         
 
 
