@@ -7,8 +7,8 @@ def create_author(first_name, last_name, email, password):
     db.session.commit()
     return new_author
 
-def get_author(id):
-    return Author.query.get(id)
+def get_author_by_id(id):
+    return Author.query.get(id).all()
 
 def get_all_authors():
     return Author.query.all()
@@ -24,11 +24,10 @@ def get_author_by_name(first_name,last_name):
     print(first_name,last_name)
     authors = Author.query.filter_by(first_name=first_name)
     authors.query.filter_by(last_name = last_name).all()
+    if not authors:                              
+        new_author = create_default_author_account(first_name,last_name)    
+        authors = [new_author]
     return authors
-    # if not authors:                               This section needs to be reviewed, can't create author without 
-    #     new_author = create_author(name=name)     relevant parameters
-    #     authors = [new_author]
-    #     return authors
     
 def create_default_author_account(first_name,last_name):
     password = last_name+first_name
