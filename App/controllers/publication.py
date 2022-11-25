@@ -2,7 +2,7 @@ from App.models import Publication
 from App.database import db
 from . import author
 
-def create_publication( author_id ,title, fields, publication_date, authors):
+def create_publication(title, fields, publication_date, authors):
     new_publication = Publication(title, fields, publication_date)
     db.session.add(new_publication)
     db.session.commit()
