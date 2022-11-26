@@ -45,7 +45,7 @@ class Author(db.Model):
             if author not in authors:
                 queue.put(author)       #queue here is a python queue (queue.Queue)
         if not queue.empty():
-            queue.get().getPublicationTree(authors, publications, queue)
+            authors, publications = queue.get().getPublicationTree(authors, publications, queue)
         return authors, publications
             
     def toDict(self):
