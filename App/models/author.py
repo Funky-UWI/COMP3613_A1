@@ -32,18 +32,22 @@ class Author(db.Model):
             publications.append(record.publication)
         return publications
 
-
-    def getPublicationTree(self, authors):
-        authors.append(self)
+    def getPublicationTree(self, authors, publications, queue):
+        if self not in authors:
+            authors.append(self)
         publications = self.getPublications()
         for publication in publications:
-            coAuthors = publication.getAuthors()
+            if publication not in publications:
+                publications.append(publication)
+                coAuthors = publication.getAuthors()
+        publications.append("end")
         for author in coAuthors:
             if author not in authors:
-                publications.append(author.getPublicationTree(authors))
-        return publications
-
-
+                queue.put(author)       #queue here is a python queue (queue.Queue)
+        if not queue.empty():
+            queue.get().getPublicationTree(authors, publications, queue)
+        return authors, publications
+            
     def toDict(self):
         return{
             'id': self.id,
@@ -51,4 +55,3 @@ class Author(db.Model):
             'last_name': self.last_name,
             'email': self.email
         }
-
