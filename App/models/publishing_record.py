@@ -6,6 +6,10 @@ class PublishingRecord(db.Model):
     author_id = db.Column("author_id", db.Integer, db.ForeignKey("author.id"))
     publication_id = db.Column("publication_id", db.Integer, db.ForeignKey("publication.id"))
 
+    def __init__(self, author_id, publication_id):
+        self.author_id = author_id
+        self.publication_id = publication_id
+
     def toDict(self):
         return {
             "id": self.id,
