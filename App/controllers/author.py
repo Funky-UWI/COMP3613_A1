@@ -1,10 +1,16 @@
 from App.models import Author
 from App.database import db
+from sqlalchemy.exc import IntegrityError
+from queue import Queue
 
 def create_author(first_name, last_name, email, password):
     new_author = Author(first_name=first_name, last_name=last_name, email=email, password=password)
-    db.session.add(new_author)
-    db.session.commit()
+    try:
+        db.session.add(new_author)
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return None
     return new_author
 
 def get_author_by_id(id):
@@ -54,30 +60,9 @@ def get_author_publications(id):
     return author.get_publications()
 
 
-# def publication_tree(authorId):
-#     traversed_auths = []
-#     root_pubs = []
-#     root_co_auths= []
-#     root_pubs = get_author_publications(authorId)
-#     traversed_auths.append(authorId)
-#     for pub in root_pubs:
-#         current_auths= pub.getAuthors()
-#         for auth in current_auths:
-#             if traversed_auths.contains(auth.id) == False:
-#                 traversed_auths.append(auth.id)
-#                 root_pubs.extend(get_author_publications(auth.id))
-
-#     pub_tree = []
-#     for auth in traversed_auth:
-#         pub_tree.extend(publication_tree(auth))
-
-#     return pub_tree
-        
-
-
-# def getpublicationtree(id):
-#     author = get_author(id)
-#     if not author:
-#         return []
-#     return author.get_publications()
-    
+def author_publication_tree(id):
+    author = get_author_by_id(id)
+    authors = []
+    publications = []
+    queue = Queue()
+    return author.getPublicationTree(authors, publications, queue)
