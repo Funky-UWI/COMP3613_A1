@@ -33,3 +33,8 @@ def signup():
 def pubtree(id):
     authors, publications = author_publication_tree(id)
     return render_template("pubtree.html", authors=authors, publications=publications)
+
+@user_views.route("/<id>",methods=["GET"])
+def author(id):
+    author = get_author_by_id(id)
+    return render_template("author.html",author = author.toJSON()) #Change to author template
