@@ -34,16 +34,18 @@ class Author(db.Model):
 
     def getPublicationTree(self, authors, publications, queue):
         if self not in authors:
-            authors.append(self)
-        publications = self.getPublications()
-        for publication in publications:
+            authors.append(list(self))
+        coauthors = []
+        for publication in self.getPublications():
             if publication not in publications:
                 publications.append(publication)
-                coAuthors = publication.getAuthors()
+                coAuthors.extend(publication.getAuthors())
         publications.append("end")
         for author in coAuthors:
             if author not in authors:
+                authors.append(author)
                 queue.put(author)       #queue here is a python queue (queue.Queue)
+        authors.append("end")
         if not queue.empty():
             authors, publications = queue.get().getPublicationTree(authors, publications, queue)
         return authors, publications
