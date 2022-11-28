@@ -9,12 +9,12 @@ def create_publication(title, field, publication_date, authors):
     for auth in authors:
         exists = author.get_author_by_name(auth.first_name,auth.last_name)
         if exists == None:
-            new_author = author.create_default_author_account(auth.first_name,auth.last_name)
+            new_author = author.create_default_author_account(auth.first_name, auth.last_name)
             new_record = PublishingRecord(new_author.id, new_publication.id)
-            db.session.add(new_record)
+            # db.session.add(new_record)
         else:
             new_record = PublishingRecord(exists.id, new_publication.id)
-            db.session.add(new_record)
+    db.session.add(new_record)
     db.session.commit()
 
     return new_publication

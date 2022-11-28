@@ -35,16 +35,10 @@ def get_author_by_name(first_name,last_name):
         authors = [new_author]
     return authors
     
-def create_default_author_account(first_name,last_name):
-    password = last_name+first_name
-    email = first_name+"."+last_name+"@mail.com"
-    new_author = create_author(first_name, last_name, password,email)
-    if new_author != None:
-        db.session.add(new_author)
-        db.session.commit()
-        return True
-    else:
-        return False
+def create_default_author_account(first_name, last_name, email):
+    password = first_name + "pass"
+    new_author = create_author(first_name, last_name, email, password)
+    return new_author == None
 
 def get_author_by_id(id):
     author = Author.query.filter_by(id=id).all()
@@ -65,4 +59,4 @@ def author_publication_tree(id):
     authors = []
     publications = []
     queue = Queue()
-    return author.getPublicationTree(authors, publications, queue)
+    return author.getPublicationTree(root, authors, publications, queue)

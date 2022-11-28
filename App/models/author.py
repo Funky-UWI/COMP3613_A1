@@ -11,7 +11,7 @@ class Author(db.Model):
     password = db.Column("password", db.String(60), nullable=False)
     records = db.relationship("PublishingRecord", backref="author", lazy=True, cascade="all, delete-orphan")
 
-    def __init__(self, first_name, last_name, email, password,qualifications):
+    def __init__(self, first_name, last_name, email, password):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
