@@ -15,8 +15,8 @@ class Publication(db.Model):
 
     def getAuthors(self):
         authors = []
-        for record in records:
-            authors.append(record.author)
+        for record in self.records:
+            authors.append(self.record.author)
         return authors
     
     def toDict(self):

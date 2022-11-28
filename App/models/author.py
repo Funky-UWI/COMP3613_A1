@@ -1,5 +1,5 @@
 from App.database import db
-from App.models.publication import getAuthors
+# import Publication
 from werkzeug.security import check_password_hash, generate_password_hash
 
 class Author(db.Model):
@@ -32,21 +32,21 @@ class Author(db.Model):
             publications.append(record.publication)
         return publications
 
-    def getPublicationTree(self, authors, publications, queue):
-        if self not in authors:
-            authors.append(self)
-        publications = self.getPublications()
-        for publication in publications:
-            if publication not in publications:
-                publications.append(publication)
-                coAuthors = publication.getAuthors()
-        publications.append("end")
-        for author in coAuthors:
-            if author not in authors:
-                queue.put(author)       #queue here is a python queue (queue.Queue)
-        if not queue.empty():
-            authors, publications = queue.get().getPublicationTree(authors, publications, queue)
-        return authors, publications
+    # def getPublicationTree(self, authors, publications, queue):
+    #     if self not in authors:
+    #         authors.append(self)
+    #     publications = self.getPublications()
+    #     for publication in publications:
+    #         if publication not in publications:
+    #             publications.append(publication)
+    #             coAuthors = publication.getAuthors()
+    #     publications.append("end")
+    #     for author in coAuthors:
+    #         if author not in authors:
+    #             queue.put(author)       #queue here is a python queue (queue.Queue)
+    #     if not queue.empty():
+    #         authors, publications = queue.get().getPublicationTree(authors, publications, queue)
+    #     return authors, publications
             
     def toDict(self):
         return{
