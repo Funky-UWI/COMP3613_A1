@@ -4,5 +4,27 @@
 {% block nav %}{% endblock %}
 
 {% block content %}
-    <!-- Add page content here -->
+    <form action="" method="post" id="authors_form">
+        <div class="row">
+            <div class="col s6">1</div>
+            <div class="col s12 input-field">
+                <label for="fname">First Name</label>
+                <input class="input-field col s12" type="text" name="fname">
+            </div>
+        
+            <div class="col s12 input-field">
+                <label for="lname">Last Name</label>
+                <input class="input-field col s12" type="text" name="lname">
+            </div>
+
+            <div class="col s12 input-field">
+                <label for="email">Email</label>
+                <input class="input-field col s12" type="text" name="email">
+            </div>
+        </div>
+    </form>
+    <a class="btn-floating" onclick="add_author()">
+        <i class="material-icons">add</i>
+    </a>
+    <button class="btn waves-effect waves-light center" form="authors_form" type="submit">Submit</button>
 {% endblock %}
