@@ -1,102 +1,65 @@
-# from flask import Blueprint, render_template, jsonify, request, send_from_directory
-# from flask_jwt import jwt_required
-# # for exceptions
-# import sys
+from flask import Blueprint, render_template, jsonify, request, send_from_directory, redirect, url_for, flash
+from flask_jwt import jwt_required, current_identity
+from App.controllers import *
 
-# from App.controllers import (
-#     create_user, 
-#     get_all_users,
-#     get_all_users_json,
-# )
+user_views = Blueprint('user_views', __name__, template_folder='../templates')
 
-# from App.controllers import *
+@user_views.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        form = request.get_json()
+        author = authenticate(form["email"], form["password"])
+        if user:
+            return render_template("index.html")
+        else:
+            flash("Invalid email or password.")
+            return render_template("login.html")
+    else:
+        return render_template("login.html")
 
-# user_views = Blueprint('user_views', __name__, template_folder='../templates')
+@user_views.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        form = request.get_json()
+        author = create_author(form["fname"], form["lname"], form["email"], form["password"])
+        if not author:
+            flash("Author already exists.")
+            return render_template("signup.html")
+        else:
+            flash("Author account succesfully created.")
+            return render_template("index.html")
 
+@user_views.route("/<id>/pubtree", methods=["GET"])
+def pubtree(id):
+    root, authors, publications = author_publication_tree(id)
+    return render_template("pubtree.html", root=root)
 
-# @user_views.route('/users', methods=['GET'])
-# def get_user_page():
-#     users = get_all_users()
-#     return render_template('users.html', users=users)
+@user_views.route("/<id>",methods=["GET"])
+def author(id):
+    author = get_author_by_id(id)
+    return render_template("author.html",author = author.toJSON()) #Change to author template
 
-# @user_views.route('/api/users')
-# def client_app():
-#     users = get_all_users_json()
-#     return jsonify(users)
+@user_views.route("/addpublication", methods=["GET", "POST"])
+def add_publication():
+    if request.method == "POST":
+        data = request.get_json()
+        return redirect((url_for(".add_authors")), data=data)
+    else:
+        fields = [  "Climate Change", "Cancer Research", "Music Therapy", "Ocean Acidification", 
+                    "Urban Development", "Mental Health", "Sustainable Agriculture"]
+        render_template("add_publication.html", fields=fields)
 
-# @user_views.route('/static/users')
-# def static_user_page():
-#   return send_from_directory('static', 'static-user.html')
-
-# @user_views.route('/signup', methods=["POST"])
-# def create_user_route():
-#     data = request.get_json()
-#     if not data:
-#         return "Missing request body.", 400
-#     username = data['username']
-#     password = data['password']
-#     if not username or not password:
-#         return "Missing username or password parameter.", 400
-#     user = create_user(username, password)
-#     if not user:
-#         return "Failed to create.", 400
-#     return user.toJSON(), 201
-
-# @user_views.route('/publications', methods=["GET"])
-# def get_publications():
-#     args = request.args
-#     if not args:
-#         pubs = get_all_publications_json()
-#         return jsonify(pubs), 200
-#     author_id = args.get("author")
-#     query = args.get("query")
-#     pubs = []
-#     if author_id:
-#         pubs = get_author_publications(author_id)
-#     if query:
-#         query = query.lower()
-#         print(query)
-#         pubs = filter(lambda pub: query in pub['title'].lower(), pubs)
-#     return jsonify(list(pubs)), 200
-        
-
-# @user_views.route('/publications', methods=["POST"])
-# @jwt_required()
-# def post_publication():
-#     data = request.get_json()
-#     author_names = data['authors']
-#     coauthor_names = data['coauthors']
-#     authors = sum ( [get_author_by_name(name) for name in author_names], [] )
-#     coauthors = sum ( [get_author_by_name(name) for name in coauthor_names], [] )
-#     # return jsonify(author_names)
-#     try:
-#         new_pub = create_publication(data['title'], authors, coauthors)
-#     except Exception as e:
-#         return f'Could not create due to exception: {e.__class__}', 400
-#     return new_pub.toJSON(), 201
-
-# @user_views.route('/author', methods=["POST"])
-# @jwt_required()
-# def create_author_profile():
-#     data = request.get_json()
-#     # return jsonify(data)
-#     try:
-#         new_author = create_author(data['name'], data['dob'], data['qualifications'])
-#     except Exception as e:
-#         return f'Could not create due to exception: {e.__class__}', 400 
-#     return new_author.toJSON(), 201
-
-# @user_views.route('/author', methods=["GET"])
-# def get_author_profile():
-#     authors = get_all_authors_json()
-#     return jsonify(authors)
-
-# @user_views.route('/pubtree', methods=['GET'])
-# def get_pub_tree():
-#     args = request.args
-#     author_id = args.get('author_id')
-#     if not author_id:
-#         return "Must provide ID.", 400
-
-#     pubs = get_author_publications(author_id)
-#     return jsonify(pubs)
+@user_views.route("/addauthors", methods=["GET", "POST"])
+def add_authors():
+    if request.method == "POST":
+        data = request.args.get("data", None)
+        authors = []
+        for fname, lname, email in zip( request.form.getlist("fname"),
+                                        request.form.getlist("lname"),
+                                        request.form.getlist("email")):
+            author = {"first_name": fname, "last_name": lname, "email": email}
+            authors.append(author)
+        publication = create_publication(data["title"], data["field"], data["publication_date"], authors)
+        return redirect(url_for(".author"), id=current_identity.id)
+    else:
+        return render_template("add_author.html")
