@@ -24,3 +24,7 @@ function add_author(){
         </div>
     `;
 };
+
+function display_author_nodes(){
+    
+};

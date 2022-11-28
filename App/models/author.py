@@ -2,6 +2,8 @@ from App.database import db
 from App.models.publication import getAuthors
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from App.node import Node
+
 class Author(db.Model):
     __tablename__ = "author"
     id = db.Column("id", db.Integer, primary_key=True)
@@ -32,24 +34,44 @@ class Author(db.Model):
             publications.append(record.publication)
         return publications
 
-    def getPublicationTree(self, authors, publications, queue):
+    # def getPublicationTree(self, authors, publications, queue):
+    #     if self not in authors:
+    #         authors.append(list(self))
+    #     coauthors = []
+    #     for publication in self.getPublications():
+    #         if publication not in publications:
+    #             publications.append(publication)
+    #             coAuthors.extend(publication.getAuthors())
+    #     publications.append("end")
+    #     for author in coAuthors:
+    #         if author not in authors:
+    #             authors.append(author)
+    #             queue.put(author)       #queue here is a python queue (queue.Queue)
+    #     authors.append("end")
+    #     if not queue.empty():
+    #         authors, publications = queue.get().getPublicationTree(authors, publications, queue)
+    #     return authors, publications
+
+    def getPublicationTree(self, root, authors, publications, queue):
         if self not in authors:
-            authors.append(list(self))
-        coauthors = []
+            authors.append(self)
+            root = Node(self, [])
         for publication in self.getPublications():
             if publication not in publications:
                 publications.append(publication)
-                coAuthors.extend(publication.getAuthors())
-        publications.append("end")
-        for author in coAuthors:
-            if author not in authors:
-                authors.append(author)
-                queue.put(author)       #queue here is a python queue (queue.Queue)
-        authors.append("end")
+                root.children.append(Node(publication, []))
+        for child in root.children:
+            coAuthors = child.node.getAuthors()
+            for author in coAuthors:
+                if author not in authors:
+                    authors.append(author)
+                    child.node.children.append(author)
+                    queue.put(Node(author, []))
         if not queue.empty():
-            authors, publications = queue.get().getPublicationTree(authors, publications, queue)
-        return authors, publications
-            
+            author = queue.get()
+            root, authors, publications = author.node.getPublicationTree(author, authors, publications, queue)
+        return root, authors, publications
+        
     def toDict(self):
         return{
             'id': self.id,
