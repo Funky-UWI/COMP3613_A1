@@ -1,5 +1,4 @@
 from App.database import db
-from flask_sqlalchemy import ForeignKey
 
 class Publication(db.Model):
     __tablename__ = "publication"
