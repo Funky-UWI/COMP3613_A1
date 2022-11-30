@@ -32,27 +32,27 @@ def signup():
             return render_template("index.html")
 
 @user_views.route("/logout",methods=["GET"])
-@login_required()
+@login_required
 def logout():
     logoutuser()
     redirect("/login")
 
 @user_views.route("/<id>/pubtree", methods=["GET"])
-@login_required()
+@login_required
 def pubtree(id):
     root, authors, publications = author_publication_tree(id)
     return render_template("pubtree.html", root=root)
 
 
 @user_views.route("/<id>",methods=["GET"])
-@login_required()
+@login_required
 def author(id):
     author = get_author_by_id(id)
     return render_template("author_page.html",author = author)
 
 
 @user_views.route("/addpublication", methods=["GET", "POST"])
-@login_required()
+@login_required
 def add_publication():
     if request.method == "POST":
         data = request.get_json()
@@ -64,7 +64,7 @@ def add_publication():
 
 
 @user_views.route("/addauthors", methods=["GET", "POST"])
-@login_required()
+@login_required
 def add_authors():
     if request.method == "POST":
         data = request.args.get("data", None)

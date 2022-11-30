@@ -1,10 +1,16 @@
-from flask_login import login_user, logout_user, LoginManager
-
+from flask_login import login_user, logout_user,LoginManager
+from App.models import author
+from flask import redirect,render_template
 
 login_manager = LoginManager()
+
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(Author_id):
     return User.query.get(user_id)
+
+@login_manager.unauthorized_handler
+def no_authorization():
+    return render_template("login.html")
 
 def authenticate(email, password):
     author = Author.query.filter_by(email=email).first()
@@ -12,8 +18,8 @@ def authenticate(email, password):
         return author
     return None
 
-def loginuser(user, remember):
-    return login_user(user, remember=remember)
+def loginuser(author, remember):
+    return login_user(author, remember=remember)
 
 def logoutuser():
     logout_user()
