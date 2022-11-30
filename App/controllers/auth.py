@@ -1,6 +1,6 @@
 from flask_login import login_user, logout_user,LoginManager
 from App.models import author
-from flask import redirect,render_template
+from flask import redirect,render_template,url_for
 
 login_manager = LoginManager()
 
@@ -10,7 +10,7 @@ def load_user(Author_id):
 
 @login_manager.unauthorized_handler
 def no_authorization():
-    return render_template("login.html")
+    return redirect("/login")
 
 def authenticate(email, password):
     author = Author.query.filter_by(email=email).first()
