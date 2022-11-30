@@ -5,13 +5,13 @@ from App.controllers import *
 user_views = Blueprint('user_views', __name__, template_folder='../templates')
 
 
-
 @user_views.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         form = request.get_json()
         author = authenticate(form["email"], form["password"])
-        if user:
+        if author:
+            loginuser(author,True)
             return render_template("index.html")
         else:
             flash("Invalid email or password.")
@@ -31,6 +31,11 @@ def signup():
             flash("Author account succesfully created.")
             return render_template("index.html")
 
+@user_views.route("/logout",methods=["GET"])
+@login_required()
+def logout():
+    logoutuser()
+    redirect("/login")
 
 @user_views.route("/<id>/pubtree", methods=["GET"])
 @login_required()
@@ -43,7 +48,7 @@ def pubtree(id):
 @login_required()
 def author(id):
     author = get_author_by_id(id)
-    return render_template("author.html",author = author) #Change to author template
+    return render_template("author_page.html",author = author)
 
 
 @user_views.route("/addpublication", methods=["GET", "POST"])
