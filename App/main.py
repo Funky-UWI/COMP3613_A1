@@ -42,7 +42,6 @@ def loadConfig(app, config):
         app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
         app.config['DEBUG'] = os.environ.get('ENV').upper() != 'PRODUCTION'
         app.config['ENV'] = os.environ.get('ENV')
-        app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
         delta = os.environ.get('JWT_EXPIRATION_DELTA', 7)
         
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(days=int(delta))
