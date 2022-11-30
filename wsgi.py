@@ -1,6 +1,8 @@
 import click, pytest, sys
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
+from flask_jwt_extended import JWTManager
+from flask_jwt_extended.exceptions import NoAuthorizationError
 
 from App.database import create_db, get_migrate
 from App.main import create_app
@@ -15,6 +17,15 @@ from datetime import date
 
 app = create_app()
 migrate = get_migrate(app)
+jwt = JWTManager(app)
+
+error = {
+    "Error": "401"
+}
+
+@jwt.unauthorized_loader(error)
+def custom_unauthroized_handler():
+    return url_for("login") 
 
 # This command creates and initializes the database
 @app.cli.command("init", help="Creates and initializes the database")

@@ -7,21 +7,22 @@ from werkzeug.datastructures import  FileStorage
 from datetime import timedelta
 
 
+
 from App.database import create_db
 
-from App.controllers import (
-    setup_jwt
-)
+# from App.controllers import (
+#     setup_jwt
+# )
 
 from App.views import (
-    # user_views,
+    user_views,
     index_views
 )
 
 # New views must be imported and added to this list
 
 views = [
-    # user_views,
+    user_views,
     index_views
 ]
 
@@ -41,6 +42,7 @@ def loadConfig(app, config):
         app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
         app.config['DEBUG'] = os.environ.get('ENV').upper() != 'PRODUCTION'
         app.config['ENV'] = os.environ.get('ENV')
+        app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
         delta = os.environ.get('JWT_EXPIRATION_DELTA', 7)
         
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(days=int(delta))
@@ -60,6 +62,6 @@ def create_app(config={}):
     configure_uploads(app, photos)
     add_views(app, views)
     create_db(app)
-    setup_jwt(app)
+    # setup_jwt(app)
     app.app_context().push()
     return app

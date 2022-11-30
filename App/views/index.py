@@ -1,15 +1,14 @@
 from flask import Blueprint, redirect, render_template, request, send_from_directory,url_for
-
+from flask_jwt_extended import jwt_required
 index_views = Blueprint('index_views', __name__, template_folder='../templates')
 
-# @jwt_required
+# 
 @index_views.route('/', methods=['GET'])
+@jwt_required(optional=False)
 def index_page():
-    return render_template('signup.html')
+    return render_template('index.html')
 
-# @index_views.route('/home',methods=['GET'])
-# def home():
-#     if current_user.is_authenticated():
-#         return render_template("home.html") #Replace with home templateS
-#     else:
-#         redirect(url_for('Login'))
+
+@index_views.route('/signup',methods=['GET'])
+def home():
+    return render_template("signup.html")
